@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "961355364019",
+    "project_id": "patrullajes-serenazgo-cusco",
+    "storage_bucket": "patrullajes-serenazgo-cusco.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961355364019:android:a568071214bbc234c362c6",
+        "android_client_info": {
+          "package_name": "com.patrullajes_serenazgo_cusco.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGIOZhIa5aqYXDTgXmK1vpJ6wdWOhQn6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
