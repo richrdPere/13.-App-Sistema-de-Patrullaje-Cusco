@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/alerts/IncidentAlertScreen.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/chats/ChatsScreen.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/map/PatrolMapScreen.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/report/IncidentReportScreen.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/resume/ResumeScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,13 +18,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Lista de widgets que representan las pantallas
   final List<Widget> _screens = [
+    Center(child: ResumeScreen()), // Resume
     Center(child: PatrolMapScreen()), // Mapa Interactivo
-    Center(child: Text('Búsqueda', style: TextStyle(fontSize: 24))), // Búsqueda
+    //Center(child: Text('Búsqueda', style: TextStyle(fontSize: 24))), // Búsqueda
     Center(child: IncidentReportScreen()), // Publicaciones
-    Center(child: IncidentAlertScreen()), // Alerta
-    const Center(
-      child: ProfileScreen(),
-    ), // Perfil// Perfil
+    Center(child: ChatsScreen()), // Chats
+    Center(child: IncidentAlertScreen()), // Alerta - Notificaciones
+
+    // const Center(
+    //   child: ProfileScreen(),
+    // ), // Perfil
     // const Center(
     //   child: FeedScreen(),
     // ), // Feed
@@ -73,29 +78,34 @@ class _HomeScreenState extends State<HomeScreen> {
         showUnselectedLabels: true,
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Principal',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.map_outlined),
             activeIcon: Icon(Icons.map),
             label: 'Mapa',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Buscar',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.search_outlined),
+          //   activeIcon: Icon(Icons.search),
+          //   label: 'Buscar',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pages_outlined),
             activeIcon: Icon(Icons.pages),
             label: 'Reportar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline_sharp),
-            activeIcon: Icon(Icons.chat_sharp),
-            label: 'Alertas',
+            icon: Icon(Icons.chat_outlined),
+            activeIcon: Icon(Icons.chat),
+            label: 'Chats',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Perfil',
+            icon: Icon(Icons.notifications),
+            activeIcon: Icon(Icons.notifications),
+            label: 'Alertas',
           ),
         ],
       ),
