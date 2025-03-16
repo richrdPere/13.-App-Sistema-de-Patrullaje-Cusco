@@ -1,0 +1,2 @@
+C:/Users/Richard Pereira/Desktop/PROYECTO - Flutter/13.-Sistema-de-Patrullaje-Cusco/android/app/.cxx/Debug/j6icw2v3/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Richard Pereira/Desktop/PROYECTO - Flutter/13.-Sistema-de-Patrullaje-Cusco/android/app/.cxx/Debug/j6icw2v3/armeabi-v7a/CMakeFiles/rebuild_cache.dir
