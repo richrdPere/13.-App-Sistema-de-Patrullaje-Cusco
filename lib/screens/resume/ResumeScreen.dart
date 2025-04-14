@@ -31,7 +31,13 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Resumen de Operaciones"),
+        title: const Text(
+          "Resumen de Operaciones",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: primaryColor,
         actions: [
           IconButton(

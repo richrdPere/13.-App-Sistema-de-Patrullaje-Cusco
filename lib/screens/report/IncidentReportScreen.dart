@@ -4,7 +4,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 import 'dart:io';
+
+import 'dart:async';
+
+import 'package:patrullaje_serenazgo_cusco/services/AddressService.dart';
 
 class IncidentReportScreen extends StatefulWidget {
   @override
@@ -21,13 +26,36 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
   // Variable para almacenar la ubicación
   String? _location;
+  DateTime currentTime = DateTime.now();
+  Position? currentPosition;
+  String? _direccion;
+  Timer? _timer;
+
+  // Variables locales
+  String? _Lat;
+  String? _Lon;
 
   // Instancia de Firebase Authentication
   final _firebaseAuth = FirebaseAuth.instance;
 
   @override
+  void initState() {
+    super.initState();
+    _startClock(); // ⏰ Iniciar reloj en tiempo real
+    _getLocation(); // 📍 Obtener ubicación GPS al iniciar
+  }
+
+  /// ⏰ Iniciar el temporizador para actualizar la hora cada segundo
+  void _startClock() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() => currentTime = DateTime.now());
+    });
+  }
+
+  @override
   void dispose() {
     _descriptionController.dispose();
+    _timer?.cancel(); // ❌ Detener el temporizador al salir de la pantalla
     super.dispose();
   }
 
@@ -56,14 +84,26 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
   /// Método para obtener la ubicación actual del usuario
   Future<void> _getLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+    final permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    final pos = await Geolocator.getCurrentPosition(
+        // ignore: deprecated_member_use
+        desiredAccuracy: LocationAccuracy.high);
+
+    if (mounted) {
+      final addressService = AddressService();
+      final direccionObtenida = await addressService.getAddressFromCoordinates(
+        pos.latitude,
+        pos.longitude,
+      );
       setState(() {
-        _location = "${position.latitude}, ${position.longitude}";
+        currentPosition = pos;
+        _direccion = direccionObtenida;
       });
-    } catch (e) {
-      print("Error obteniendo ubicación: $e");
     }
   }
 
@@ -124,6 +164,12 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
     _clearForm();
   }
 
+  // Formatear los datos
+  String _formatDate(DateTime dt) {
+    return "${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} — "
+        "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
+  }
+
   /// Método para limpiar el formulario después de enviar el reporte
   void _clearForm() {
     setState(() {
@@ -137,6 +183,12 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
+    final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
+
+    final gps = currentPosition;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -146,19 +198,75 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: primaryColor,
+        actions: [
+          IconButton(
+            icon: CircleAvatar(
+              backgroundImage: NetworkImage("https://i.pravatar.cc/150?img=5"),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Vista previa de la imagen seleccionada
+            // 1.- Cuadro con la ubicación actual
+            // Fecha
+            Text(
+              "📅 ${_formatDate(currentTime)}",
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+            ),
+            const SizedBox(height: 4),
+
+            // Latitud / Longitud
+            if (gps != null)
+              Text(
+                "📍 Lat: ${gps.latitude.toStringAsFixed(6)}  "
+                "Lon: ${gps.longitude.toStringAsFixed(6)}",
+                style: const TextStyle(color: Colors.black),
+              )
+            else
+              const Text("📍 Obteniendo ubicación...",
+                  style: TextStyle(color: Colors.black)),
+            const SizedBox(height: 4),
+
+            // Dirección
+            if (_direccion != null)
+              Text(
+                "📌 Dirección: $_direccion",
+                style: const TextStyle(color: Colors.black),
+              )
+            else
+              const Text("📌 Obteniendo dirección...",
+                  style: TextStyle(color: Colors.black)),
+
+            SizedBox(height: 16.0),
+
+            // 2.- Campo de texto para la descripción del incidente
+            TextField(
+              controller: _descriptionController,
+              decoration: InputDecoration(
+                labelText: 'Descripción del incidente',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            SizedBox(height: 16.0),
+
+            // 3.- Vista previa de la imagen seleccionada
             _imageFile != null
                 ? Image.file(_imageFile!, height: 200, fit: BoxFit.cover)
                 : Placeholder(fallbackHeight: 200, color: Colors.grey.shade300),
 
-            // Botones para seleccionar medios
+            // 4.- Botones para seleccionar medios
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -178,30 +286,7 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             ),
             SizedBox(height: 16.0),
 
-            // Campo de texto para la descripción del incidente
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Descripción del incidente',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            SizedBox(height: 16.0),
-
-            // Botón para obtener la ubicación actual
-            ElevatedButton(
-              onPressed: _getLocation,
-              child: Text(
-                _location != null
-                    ? "Ubicación: $_location"
-                    : "Obtener Ubicación",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            SizedBox(height: 16.0),
-
-            // Botón para enviar el reporte
+            // 5.- Botón para enviar el reporte
             ElevatedButton(
               onPressed: _uploadReport,
               style: ElevatedButton.styleFrom(

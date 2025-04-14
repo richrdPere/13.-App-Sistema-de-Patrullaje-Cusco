@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 
 void main() {
   runApp(const ChatsScreen());
@@ -24,9 +25,33 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
+    final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chat de Patrullaje"),
+        title: const Text(
+          "Chat de Patrullaje",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: primaryColor,
+        actions: [
+          IconButton(
+            icon: CircleAvatar(
+              backgroundImage: NetworkImage("https://i.pravatar.cc/150?img=5"),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: const ChatList(),
     );

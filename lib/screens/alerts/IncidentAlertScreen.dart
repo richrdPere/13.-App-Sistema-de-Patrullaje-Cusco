@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 
 class IncidentAlertScreen extends StatelessWidget {
   // Simulación de datos de alertas
@@ -25,6 +26,10 @@ class IncidentAlertScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
+    final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,7 +39,20 @@ class IncidentAlertScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: primaryColor,
+        actions: [
+          IconButton(
+            icon: CircleAvatar(
+              backgroundImage: NetworkImage("https://i.pravatar.cc/150?img=5"),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: incidentAlerts.length, // Número de alertas

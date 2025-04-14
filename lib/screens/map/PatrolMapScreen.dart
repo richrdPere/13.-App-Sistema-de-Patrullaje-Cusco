@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/map/PatrolMapController.dart';
+import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PatrolMapScreen extends StatefulWidget {
@@ -33,8 +34,34 @@ class _PatrolMapScreenState extends State<PatrolMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
+    final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Mapa de Patrullaje')),
+      appBar: AppBar(
+        title: Text(
+          'Mapa de Patrullaje',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: primaryColor,
+        actions: [
+          IconButton(
+            icon: CircleAvatar(
+              backgroundImage: NetworkImage("https://i.pravatar.cc/150?img=5"),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(-13.525, -71.972), // Latitud y longitud inicial
