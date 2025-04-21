@@ -29,10 +29,17 @@ class DashboardScreen extends StatelessWidget {
     final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
     final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
 
+    final List<String> novedades = [
+      "⚡ Corte de luz programado en zona A.",
+      "🚧 Manifestación en la Av. Cultura.",
+      "🧹 Operativo de limpieza en zona B.",
+      "🚨 Vehículo sospechoso reportado en zona C.",
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Resumen de Operaciones",
+          "Operaciones del Sereno",
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -55,24 +62,85 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          children: const [
-            SummaryCard(
-                title: "Patrullas Activas",
-                value: "12",
-                icon: Icons.directions_walk),
-            SummaryCard(
-                title: "Incidentes Reportados",
-                value: "5",
-                icon: Icons.warning),
-            SummaryCard(title: "Zonas Cubiertas", value: "8", icon: Icons.map),
-            SummaryCard(
-                title: "Alertas Recientes",
-                value: "3",
-                icon: Icons.notifications),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Título - Resumen
+            Text(
+              "Resumen del dia",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Cards del resumen
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 16,
+                children: const [
+                  SummaryCard(
+                      title: "Patrullas Activas",
+                      value: "12",
+                      icon: Icons.directions_walk),
+                  SummaryCard(
+                      title: "Incidentes Reportados",
+                      value: "5",
+                      icon: Icons.warning),
+                  SummaryCard(
+                      title: "Zonas Cubiertas", value: "8", icon: Icons.map),
+                  SummaryCard(
+                    title: "Alertas Recientes",
+                    value: "3",
+                    icon: Icons.notifications,
+                  ),
+                ],
+              ),
+            ),
+            // Título - Novedades
+            Text(
+              "Novedades de la Zona",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Carrusel de novedades
+            SizedBox(
+              height: 120,
+              child: PageView.builder(
+                itemCount: novedades.length,
+                controller: PageController(viewportFraction: 0.9),
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: isDarkMode ? Colors.blueGrey[700] : Colors.blue[100],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text(
+                          novedades[index],
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

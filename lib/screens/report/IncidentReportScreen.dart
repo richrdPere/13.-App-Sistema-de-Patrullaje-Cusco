@@ -287,14 +287,45 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             SizedBox(height: 16.0),
 
             // 5.- Botón para enviar el reporte
-            ElevatedButton(
-              onPressed: _uploadReport,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: Text(
-                'Enviar Reporte',
-                style: TextStyle(color: Colors.black),
+            // ElevatedButton(
+            //   onPressed: _uploadReport,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: Colors.blue,
+            //   ),
+            //   child: Text(
+            //     'Enviar Reporte',
+            //     style: TextStyle(color: Colors.black),
+            //   ),
+            // ),
+            Center(
+              child: GestureDetector(
+                onTap: _uploadReport,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.red, // 🔴 Color rojo para emergencia
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 4),
+                      )
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      'ALERTA',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

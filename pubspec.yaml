@@ -47,6 +47,7 @@ dependencies:
   http: ^1.3.0
   geocoding: ^3.0.0   
   image: ^4.1.3                  # Para editar la imagen y superponerle texto
+  intl: ^0.18.1  # Puedes usar la última versión
 
 dev_dependencies:
   flutter_test:

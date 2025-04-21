@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/map/PatrolMapController.dart';
 import 'package:patrullaje_serenazgo_cusco/screens/profile/ProfileScreen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/intl.dart';
 
 class PatrolMapScreen extends StatefulWidget {
   const PatrolMapScreen({super.key});
@@ -14,6 +15,7 @@ class PatrolMapScreen extends StatefulWidget {
 class _PatrolMapScreenState extends State<PatrolMapScreen> {
   //late GoogleMapController _mapController;
   final _controller = HomeController();
+  DateTime? _selectedDate;
 
   @override
   void initState() {
@@ -32,11 +34,27 @@ class _PatrolMapScreenState extends State<PatrolMapScreen> {
     }
   }
 
+  void _pickDate() async {
+    DateTime now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 1),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _controller.filterPolygonsByDate(picked);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final Color primaryColor = isDarkMode ? Colors.blueGrey : Colors.blue;
-    final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
+    //final Color secondaryColor = isDarkMode ? Colors.greenAccent : Colors.green;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,6 +80,12 @@ class _PatrolMapScreenState extends State<PatrolMapScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _pickDate,
+        label: const Text("Filtrar por Fecha"),
+        icon: const Icon(Icons.calendar_today),
+        backgroundColor: primaryColor,
+      ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(-13.525, -71.972), // Latitud y longitud inicial
@@ -69,10 +93,8 @@ class _PatrolMapScreenState extends State<PatrolMapScreen> {
         ),
         myLocationEnabled: true, // Habilita la ubicación actual
         myLocationButtonEnabled: true,
-        // onMapCreated: (controller) {
-        //   _mapController = controller;
-        // },
         onMapCreated: _controller.onMapCreated,
+        polygons: _controller.getPolygons(),
       ),
     );
   }
